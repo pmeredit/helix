@@ -805,6 +805,22 @@ fn yank_main_selection_to_clipboard(
     yank_main_selection_to_clipboard_impl(cx.editor, ClipboardType::Clipboard)
 }
 
+fn regex(
+    cx: &mut compositor::Context,
+    args: &[Cow<str>],
+    event: PromptEvent,
+) -> anyhow::Result<()> {
+    if event != PromptEvent::Validate {
+        return Ok(());
+    }
+    ensure!(
+        !args.is_empty(),
+        "Regular expresion of the format /search/replace/ required"
+    );
+
+    regex_impl(cx.editor, args.first().unwrap())
+}
+
 fn yank_joined_to_clipboard(
     cx: &mut compositor::Context,
     args: &[Cow<str>],
@@ -1951,6 +1967,13 @@ pub const TYPABLE_COMMAND_LIST: &[TypableCommand] = &[
             aliases: &[],
             doc: "Yank main selection into system clipboard.",
             fun: yank_main_selection_to_clipboard,
+            completer: None,
+        },
+        TypableCommand {
+            name: "regex",
+            aliases: &["rg"],
+            doc: "Apply a regular expression replacement to the selected text (/match/replacement), can use \\0, \\1, ...\\n for captures in replacement",
+            fun: regex,
             completer: None,
         },
         TypableCommand {
