@@ -3440,6 +3440,38 @@ fn yank_main_selection_to_clipboard_impl(
     Ok(())
 }
 
+fn regex_impl(editor: &mut Editor, regex: &Cow<str>) -> anyhow::Result<()> {
+    let v = regex.split('/').collect::<Vec<_>>();
+    if v.len() != 4 {
+        bail!(
+            "Incorrect regex format: {}, the format should be : /search/replacement/",
+            regex
+        );
+    }
+    let (view, doc) = current!(editor);
+    let text = doc.text().slice(..);
+    let selection = doc.selection(view.id);
+    let value = selection.primary().fragment(text);
+
+    let (search, replace, flags) = (v[1], v[2], v[3]);
+    let re = Regex::new(search);
+    if re.is_err() {
+        bail!("Failed to compiler regular expression: {:?}", re);
+    }
+    let re = re.unwrap();
+    let transaction = Transaction::change_by_selection(doc.text(), selection, |range| {
+        let out_text_str = if flags == "g" {
+            re.replace_all(&value, replace)
+        } else {
+            re.replace(&value, replace)
+        };
+        (range.from(), range.to(), Some(out_text_str.into()))
+    });
+    apply_transaction(&transaction, doc, view);
+    editor.set_status("Regex replaced");
+    Ok(())
+}
+
 fn yank_main_selection_to_clipboard(cx: &mut Context) {
     let _ = yank_main_selection_to_clipboard_impl(cx.editor, ClipboardType::Clipboard);
 }
