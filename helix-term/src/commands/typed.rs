@@ -1972,7 +1972,7 @@ pub const TYPABLE_COMMAND_LIST: &[TypableCommand] = &[
         TypableCommand {
             name: "regex",
             aliases: &["rg"],
-            doc: "Apply a regular expression replacement to the selected text (/match/replacement/flags), can use \\0, \\1, ...\\n for captures in replacement",
+            doc: "Apply a regular expression replacement to the selected text (/match/replacement/flags), can use $0, $1, ...$n for captures in replacement",
             fun: regex,
             completer: None,
         },
