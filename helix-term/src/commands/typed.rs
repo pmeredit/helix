@@ -815,7 +815,7 @@ fn regex(
     }
     ensure!(
         !args.is_empty(),
-        "Regular expresion of the format /search/replace/ required"
+        "Regular expresion of the format /search/replace/flags required"
     );
 
     regex_impl(cx.editor, args.first().unwrap())
@@ -1972,7 +1972,7 @@ pub const TYPABLE_COMMAND_LIST: &[TypableCommand] = &[
         TypableCommand {
             name: "regex",
             aliases: &["rg"],
-            doc: "Apply a regular expression replacement to the selected text (/match/replacement), can use \\0, \\1, ...\\n for captures in replacement",
+            doc: "Apply a regular expression replacement to the selected text (/match/replacement/flags), can use \\0, \\1, ...\\n for captures in replacement",
             fun: regex,
             completer: None,
         },
