@@ -3442,7 +3442,7 @@ fn regex_impl(editor: &mut Editor, regex: &Cow<str>) -> anyhow::Result<()> {
     let v = regex.split('/').collect::<Vec<_>>();
     if v.len() != 4 {
         bail!(
-            "Incorrect regex format: {}, the format should be : /search/replacement/",
+            "Incorrect regex format: {}, the format should be : /search/replacement/flags",
             regex
         );
     }
@@ -3454,7 +3454,7 @@ fn regex_impl(editor: &mut Editor, regex: &Cow<str>) -> anyhow::Result<()> {
     let (search, replace, flags) = (v[1], v[2], v[3]);
     let re = Regex::new(search);
     if re.is_err() {
-        bail!("Failed to compiler regular expression: {:?}", re);
+        bail!("Failed to compile regular expression: {:?}", re);
     }
     let re = re.unwrap();
     let transaction = Transaction::change_by_selection(doc.text(), selection, |range| {
